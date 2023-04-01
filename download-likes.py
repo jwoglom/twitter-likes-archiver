@@ -11,6 +11,8 @@ ap.add_argument('--consumer-secret', default=os.getenv('CONSUMER_SECRET'))
 ap.add_argument('--bearer-token', default=os.getenv('BEARER_TOKEN'))
 ap.add_argument('--user-id', default=os.getenv('USER_ID'))
 ap.add_argument('--output-folder', default='.')
+ap.add_argument('--sleep-time', type=int, default=10)
+ap.add_argument('--ratelimit-sleep-time', type=int, default=60)
 args = ap.parse_args()
 
 if not args.user_id:
@@ -54,6 +56,7 @@ if os.path.exists(OUTPUT_FILE):
 seen_ids = set(map(lambda x: x['id'], items))
 
 total_added = 0
+exceptions = 0
 while l and l.data:
     added_cycle = 0
     for item in l.data:
@@ -83,18 +86,22 @@ while l and l.data:
             break
         except tweepy.errors.TooManyRequests as e:
             print(e)
-            print('sleeping')
-            time.sleep(60)
+            print('ratelimit: sleeping for %d sec' % args.ratelimit_sleep_time)
+            time.sleep(args.ratelimit_sleep_time)
         except Exception as e:
             print(e)
-            print('retrying after sleep')
-            time.sleep(10)
+            print('other error: sleeping for %d sec' % args.sleep_time)
+            time.sleep(args.sleep_time)
             l = old_l
+            exceptions += 1
+            if exceptions > 3:
+                print('too many errors -- quitting')
+                exit(1)
 
     if not l:
         print('no l!', l)
     if not l.data:
         print('no l.data!', l.data, l.meta, l)
 
-    print('loop: sleeping 10s')
-    time.sleep(10)
+    print('loop: sleeping %d sec' % args.sleep_time)
+    time.sleep(args.sleep_time)
