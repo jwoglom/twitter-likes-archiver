@@ -57,7 +57,7 @@ total_added = 0
 while l and l.data:
     added_cycle = 0
     for item in l.data:
-        if item['id'] not in seen_ids:
+        if item.data['id'] not in seen_ids:
             items.append(item.data)
             seen_ids.add(item.data['id'])
             added_cycle += 1
@@ -94,7 +94,7 @@ while l and l.data:
     if not l:
         print('no l!', l)
     if not l.data:
-        print('no l.data!', l.data)
+        print('no l.data!', l.data, l.meta, l)
 
     print('loop: sleeping 10s')
     time.sleep(10)
