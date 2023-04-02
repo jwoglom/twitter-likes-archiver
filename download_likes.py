@@ -105,6 +105,8 @@ def get_username_from_id(id):
         username = r.text.strip()
         if username.startswith('@'):
             return username[1:]
+        if username.startswith('error'):
+            return False
     return None
 
 
@@ -122,7 +124,9 @@ def post_fetch(args, items):
                 username = get_username_from_id(id)
                 if username:
                     id_to_username[id] = username
-                print("  fetched %s" % username)
+                elif username == False:
+                    id_to_username[id] = None
+                print("  fetched %d = %s" % (id, username))
         
         open(args.json_usernames_output_file, "w").write(json.dumps(id_to_username))
         
