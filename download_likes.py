@@ -114,7 +114,7 @@ if __name__ == '__main__':
     ap.add_argument('--user-id', default=os.getenv('USER_ID'))
     ap.add_argument('--json-output-file', default='tweets.json')
     ap.add_argument('--sqlite-output-file', default=None)
-    ap.add_argument('--sqlite-if-exists', default='append')
+    ap.add_argument('--sqlite-if-exists', default='replace')
     ap.add_argument('--sleep-time', type=int, default=10)
     ap.add_argument('--ratelimit-sleep-time', type=int, default=60)
     args = ap.parse_args()
