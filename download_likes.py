@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import tweepy
+import requests
 import json
 import time
 import argparse
@@ -56,7 +57,7 @@ def main(args):
 
         if added_cycle == 0:
             print("Nothing more to download")
-            post_fetch(args)
+            post_fetch(args, items)
             exit(0)
 
         total_added += added_cycle
@@ -96,9 +97,35 @@ def main(args):
         print('loop: sleeping %d sec' % args.sleep_time)
         time.sleep(args.sleep_time)
         
-    post_fetch(args)
+    post_fetch(args, items)
 
-def post_fetch(args):
+def get_username_from_id(id):
+    r = requests.post('https://tweeterid.com/ajax.php', data={'input': str(id)})
+    if r.status_code == 200:
+        username = r.text.strip()
+        if username.startswith('@'):
+            return username[1:]
+    return None
+
+
+def post_fetch(args, items):
+    if args.json_usernames_output_file:
+        print("Getting usernames", end="")
+        id_to_username = {}
+        if os.path.exists(args.json_usernames_output_file):
+            id_to_username = json.loads(open(args.json_usernames_output_file, 'r').read())
+        item_author_ids = set(map(lambda x: x['author_id'], items))
+        for id in item_author_ids:
+            if not id in id_to_username:
+                username = get_username_from_id(id)
+                if username:
+                    id_to_username[id] = username
+                print(".", end="")
+        
+        open(args.json_usernames_output_file, "w").write(json.dumps(id_to_username))
+        
+        print("Done")
+
     if args.sqlite_output_file:
         print("Converting to sqlite")
         from export_to_sqlite import export_to_sqlite
@@ -113,6 +140,7 @@ if __name__ == '__main__':
     ap.add_argument('--bearer-token', default=os.getenv('BEARER_TOKEN'))
     ap.add_argument('--user-id', default=os.getenv('USER_ID'))
     ap.add_argument('--json-output-file', default='tweets.json')
+    ap.add_argument('--json-usernames-output-file', default=None)
     ap.add_argument('--sqlite-output-file', default=None)
     ap.add_argument('--sqlite-if-exists', default='replace')
     ap.add_argument('--sleep-time', type=int, default=10)
