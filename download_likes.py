@@ -40,8 +40,8 @@ def main(args):
         l = get_tweets(apiv2)
 
     items = []
-    if os.path.exists(args.output_file):
-        items = json.loads(open(args.output_file, "r").read())
+    if os.path.exists(args.json_output_file):
+        items = json.loads(open(args.json_output_file, "r").read())
     seen_ids = set(map(lambda x: x['id'], items))
 
     total_added = 0
@@ -61,7 +61,7 @@ def main(args):
         total_added += added_cycle
         print('Found %d new tweets (%d so far, %d total)' % (added_cycle, total_added, len(items)))
 
-        open(args.output_file, "w").write(json.dumps(items, default=str))
+        open(args.json_output_file, "w").write(json.dumps(items, default=str))
 
         print(l.meta, len(items))
         if 'next_token' not in l.meta:
