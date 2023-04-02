@@ -110,21 +110,23 @@ def get_username_from_id(id):
 
 def post_fetch(args, items):
     if args.json_usernames_output_file:
-        print("Getting usernames", end="")
+        print("Getting usernames")
         id_to_username = {}
         if os.path.exists(args.json_usernames_output_file):
             id_to_username = json.loads(open(args.json_usernames_output_file, 'r').read())
         item_author_ids = set(map(lambda x: x['author_id'], items))
+        fetched_usernames = 0
         for id in item_author_ids:
             if not id in id_to_username:
+                fetched_usernames += 1
                 username = get_username_from_id(id)
                 if username:
                     id_to_username[id] = username
-                print(".", end="")
+                print("  fetched %s" % username)
         
         open(args.json_usernames_output_file, "w").write(json.dumps(id_to_username))
         
-        print("Done")
+        print("Fetched %d usernames" % fetched_usernames)
 
     if args.sqlite_output_file:
         print("Converting to sqlite")
