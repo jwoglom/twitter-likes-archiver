@@ -117,7 +117,7 @@ def post_fetch(args, items):
         item_author_ids = set(map(lambda x: x['author_id'], items))
         fetched_usernames = 0
         for id in item_author_ids:
-            if not id in id_to_username:
+            if not str(id) in id_to_username:
                 fetched_usernames += 1
                 username = get_username_from_id(id)
                 if username:
