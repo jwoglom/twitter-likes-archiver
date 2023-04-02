@@ -130,8 +130,11 @@ def post_fetch(args, items):
 
     if args.sqlite_output_file:
         print("Converting to sqlite")
-        from export_to_sqlite import export_to_sqlite
+        from export_to_sqlite import export_to_sqlite, export_usernames_to_sqlite
         export_to_sqlite(args.json_output_file, args.sqlite_output_file, args.sqlite_if_exists)
+        if args.json_usernames_output_file:
+            id_to_username = json.loads(open(args.json_usernames_output_file, 'r').read())
+            export_usernames_to_sqlite(id_to_username, args.sqlite_output_file, args.sqlite_if_exists)
 
 
 if __name__ == '__main__':

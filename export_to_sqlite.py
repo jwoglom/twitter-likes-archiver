@@ -14,6 +14,18 @@ def export_to_sqlite(json_file, output_file, if_exists='replace'):
 
     conn = sqlite3.connect(output_file)
     df.to_sql('tweets', conn, if_exists=if_exists)
+    conn.close()
+
+def export_usernames_to_sqlite(usernames, output_file, if_exists='replace'):
+    username_rows = []
+    for k, v in usernames.items():
+        username_rows.append({"id": k, "username": v})
+    df = pd.json_normalize(username_rows)
+
+    conn = sqlite3.connect(output_file)
+    df.to_sql('users', conn, if_exists=if_exists)
+    conn.close()
+
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(description="Converts a JSON file containing twitter likes into a sqlite3 database")
