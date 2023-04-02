@@ -19,7 +19,7 @@ def export_to_sqlite(json_file, output_file, if_exists='replace'):
 def export_usernames_to_sqlite(usernames, output_file, if_exists='replace'):
     username_rows = []
     for k, v in usernames.items():
-        username_rows.append({"id": k, "username": v})
+        username_rows.append({"id": int(k), "username": v})
     df = pd.json_normalize(username_rows)
 
     conn = sqlite3.connect(output_file)
