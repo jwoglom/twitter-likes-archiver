@@ -56,6 +56,7 @@ def main(args):
 
         if added_cycle == 0:
             print("Nothing more to download")
+            post_fetch(args)
             exit(0)
 
         total_added += added_cycle
@@ -95,6 +96,9 @@ def main(args):
         print('loop: sleeping %d sec' % args.sleep_time)
         time.sleep(args.sleep_time)
         
+    post_fetch(args)
+
+def post_fetch(args):
     if args.sqlite_output_file:
         print("Converting to sqlite")
         from export_to_sqlite import export_to_sqlite
