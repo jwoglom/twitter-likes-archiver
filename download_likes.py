@@ -126,7 +126,7 @@ def post_fetch(args, items):
                     id_to_username[id] = username
                 elif username == False:
                     id_to_username[id] = None
-                print("  fetched %d = %s" % (id, username))
+                print("  fetched %s = %s" % (id, username))
         
         open(args.json_usernames_output_file, "w").write(json.dumps(id_to_username))
         
