@@ -101,11 +101,14 @@ def main(args):
 
 def get_username_from_id(id):
     r = requests.post('https://tweeterid.com/ajax.php', data={'input': str(id)})
+    time.sleep(0.25)
     if r.status_code == 200:
         username = r.text.strip()
         if username.startswith('@'):
             return username[1:]
-        if username.startswith('error'):
+        if username.lower().startswith('error: connection'):
+            return None
+        if username.lower().startswith('error'):
             return False
     return None
 
